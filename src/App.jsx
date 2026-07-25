@@ -7,6 +7,7 @@ import RewardStore from './components/RewardStore';
 import SubscriptionPricing from './components/SubscriptionPricing';
 import AuthModal from './components/AuthModal';
 import { SidebarAd } from './components/AdComponents';
+import FooterMeta from './components/FooterMeta';
 import { getDailyQuote, MOOD_EMOJIS, SUBSCRIPTION_PLANS, GIFTICONS, INITIAL_GOALS_TREE, INITIAL_ROUTINE_DATA } from './constants';
 import { translations } from './i18n';
 import confetti from 'canvas-confetti';
@@ -497,15 +498,18 @@ export default function App() {
           )}
         </main>
 
-        {/* Sponsored AD Component placed at the very bottom */}
-        {user.plan === 'free' && (
-          <footer style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
-            <SidebarAd userPlan={user.plan} />
-            <div className="glass-card" style={{ padding: '12px 16px', fontSize: '0.78rem', color: 'var(--text-muted)', textAlign: 'center' }}>
-              💡 <strong>Pro Upgrade:</strong> Remove all ads and get 1.2x point boosters.
-            </div>
-          </footer>
-        )}
+        {/* Sponsored AD Component & Footer Info */}
+        <footer style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
+          {user.plan === 'free' && (
+            <>
+              <SidebarAd userPlan={user.plan} />
+              <div className="glass-card" style={{ padding: '12px 16px', fontSize: '0.78rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+                💡 <strong>Pro Upgrade:</strong> Remove all ads and get 1.2x point boosters.
+              </div>
+            </>
+          )}
+          <FooterMeta t={t} />
+        </footer>
       </div>
 
       {/* Auth Login Modal */}
