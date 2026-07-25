@@ -1,0 +1,198 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root {
+  --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  
+  /* Modern Vibrant Dark Theme Palette */
+  --bg-main: #0B0E14;
+  --bg-card: rgba(22, 27, 38, 0.75);
+  --bg-card-hover: rgba(30, 38, 54, 0.85);
+  --bg-input: rgba(15, 20, 30, 0.6);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(99, 102, 241, 0.3);
+  
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
+  
+  /* Gradients & Accent Colors */
+  --accent-morning: #F59E0B;
+  --accent-morning-glow: rgba(245, 158, 11, 0.25);
+  --grad-morning: linear-gradient(135deg, #FF8C00 0%, #FFA500 50%, #FFD700 100%);
+  
+  --accent-evening: #8B5CF6;
+  --accent-evening-glow: rgba(139, 92, 246, 0.25);
+  --grad-evening: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%);
+  
+  --accent-fire: #EF4444;
+  --accent-fire-glow: rgba(239, 68, 68, 0.3);
+  --grad-fire: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%);
+  
+  --accent-green: #10B981;
+  --accent-blue: #3B82F6;
+  
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  
+  --shadow-main: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.15);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.05) 0%, transparent 60%);
+  background-attachment: fixed;
+  word-break: keep-all;
+}
+
+/* Desktop Web Layout Adjustments */
+@media (min-width: 769px) {
+  html {
+    font-size: 16px;
+  }
+  .desktop-grid-2 {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+  }
+  .desktop-grid-3 {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 20px !important;
+  }
+  .desktop-grid-4 {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)) !important;
+    gap: 16px !important;
+  }
+}
+
+/* Glassmorphism Card Style */
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-main);
+  transition: var(--transition);
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.glass-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: var(--transition);
+  width: 100%;
+}
+
+.glass-input:focus {
+  border-color: #6366F1;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
+}
+
+.glass-button {
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+}
+
+.glass-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+}
+
+.glass-button:active {
+  transform: translateY(0);
+}
+
+/* Mobile Specific Adjustments */
+@media (max-width: 768px) {
+  html {
+    font-size: 13.5px;
+  }
+  header {
+    padding: 8px 10px !important;
+  }
+  main {
+    padding: 8px !important;
+  }
+  .glass-card {
+    padding: 14px 12px !important;
+    border-radius: 14px !important;
+  }
+  nav button {
+    padding: 5px 4px !important;
+    font-size: 0.7rem !important;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(255, 75, 43, 0.6)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 16px rgba(255, 75, 43, 0.9)); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-fire {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
