@@ -77,15 +77,45 @@ export default function App() {
     }));
   };
 
-  // Real-time Live Clock State
+  // Real-time Live Clock API Sync State
+  const [timeOffset, setTimeOffset] = useState(0);
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
+    let isMounted = true;
+    const syncTimeApi = async () => {
+      try {
+        const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Seoul');
+        if (res.ok) {
+          const data = await res.json();
+          const apiTime = new Date(data.datetime).getTime();
+          const offset = apiTime - Date.now();
+          if (isMounted) setTimeOffset(offset);
+          return;
+        }
+      } catch (e) {
+        try {
+          const res2 = await fetch('https://timeapi.io/api/v1/time/current/zone?timeZone=Asia/Seoul');
+          if (res2.ok) {
+            const data2 = await res2.json();
+            const apiTime2 = new Date(data2.dateTime).getTime();
+            const offset2 = apiTime2 - Date.now();
+            if (isMounted) setTimeOffset(offset2);
+          }
+        } catch (err) {
+          // Fallback to local device time
+        }
+      }
+    };
+    syncTimeApi();
+  }, []);
+
+  useEffect(() => {
     const timer = setInterval(() => {
-      setNow(new Date());
+      setNow(new Date(Date.now() + timeOffset));
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [timeOffset]);
 
   const isTimeBetween = (startHH, startMM, endHH, endMM) => {
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -126,12 +156,17 @@ export default function App() {
       alert(t.morningCheckInDisabledMsg);
       return;
     }
-    const todayStr = new Date().toISOString().split("T")[0];
+    const todayStr = new Date(Date.now() + timeOffset).toISOString().split("T")[0];
     if (routineData.lastMorningCheckIn !== todayStr) {
       const rewardPoints = isEarlyBirdWindow ? 15 : 10;
+      const checkInTimeFormatted = now.toLocaleTimeString(
+        lang === 'ko' ? 'ko-KR' : lang === 'ja' ? 'ja-JP' : 'en-US',
+        { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' }
+      );
       setRoutineData(prev => ({
         ...prev,
-        lastMorningCheckIn: todayStr
+        lastMorningCheckIn: todayStr,
+        morningCheckInTime: checkInTimeFormatted
       }));
       addPoints(rewardPoints, 'Morning check-in');
       confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });

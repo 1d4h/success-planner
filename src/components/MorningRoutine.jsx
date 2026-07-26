@@ -24,6 +24,10 @@ export default function MorningRoutine({
     { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' }
   );
 
+  const displayClockString = (isMorningCheckedIn && routineData?.morningCheckInTime)
+    ? routineData.morningCheckInTime
+    : liveClockString;
+
   const triggerCelebration = () => {
     confetti({
       particleCount: 60,
@@ -120,32 +124,39 @@ export default function MorningRoutine({
           </div>
         </div>
 
-        {/* Real-time Clock, Target Wake Time & Morning Check-in Button */}
+        {/* Real-time Clock / Frozen Check-in Time, Target Wake Time & Morning Check-in Button */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', width: '100%', maxWidth: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '8px', flexWrap: 'wrap' }}>
             
-            {/* Left Box: Live Real-time Clock */}
+            {/* Left Box: Live Real-time Clock or Frozen Check-in Time */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              background: 'rgba(0,0,0,0.4)',
+              background: isMorningCheckedIn ? 'rgba(16, 185, 129, 0.15)' : 'rgba(0,0,0,0.4)',
               padding: '6px 12px',
               borderRadius: 'var(--radius-md)',
-              border: '1px solid rgba(255, 215, 0, 0.3)',
-              boxShadow: '0 0 10px rgba(245, 158, 11, 0.15)'
+              border: isMorningCheckedIn ? '1px solid rgba(16, 185, 129, 0.5)' : '1px solid rgba(255, 215, 0, 0.3)',
+              boxShadow: isMorningCheckedIn ? '0 0 10px rgba(16, 185, 129, 0.2)' : '0 0 10px rgba(245, 158, 11, 0.15)'
             }}>
-              <Clock size={15} color="#FFD700" className="animate-pulse" />
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t.currentTimeLabel || '현재 실시간:'}</span>
+              <Clock size={15} color={isMorningCheckedIn ? "#10B981" : "#FFD700"} className={isMorningCheckedIn ? "" : "animate-pulse"} />
+              <span style={{ fontSize: '0.75rem', color: isMorningCheckedIn ? '#10B981' : 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+                {isMorningCheckedIn ? (t.morningCheckInTimeLabel || '오늘 기상 체크인:') : (t.currentTimeLabel || '오늘 기상 시간:')}
+              </span>
               <span style={{
-                color: '#FFD700',
+                color: isMorningCheckedIn ? '#10B981' : '#FFD700',
                 fontWeight: 800,
                 fontSize: '0.9rem',
                 letterSpacing: '0.5px',
                 fontVariantNumeric: 'tabular-nums'
               }}>
-                {liveClockString}
+                {displayClockString}
               </span>
+              {isMorningCheckedIn && (
+                <span style={{ fontSize: '0.7rem', color: '#10B981', marginLeft: '2px', fontWeight: 700 }}>
+                  (출석 🔒)
+                </span>
+              )}
             </div>
 
             {/* Middle Box: Target Wake Time */}
