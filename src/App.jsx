@@ -124,8 +124,8 @@ export default function App() {
     return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
   };
 
-  const isEarlyBirdWindow = isTimeBetween(5, 0, 6, 30);
-  const isMorningTimeWindow = isTimeBetween(5, 0, 9, 0);
+  const isEarlyBirdWindow = isTimeBetween(5, 0, 6, 0);
+  const isStandardMorningWindow = isTimeBetween(6, 0, 8, 0);
 
   const isNightOwlWindow = isTimeBetween(21, 30, 22, 30);
   const isEveningTimeWindow = isTimeBetween(20, 0, 23, 59);
@@ -154,7 +154,16 @@ export default function App() {
   const handleCheckInMorning = () => {
     const todayStr = new Date(Date.now() + timeOffset).toISOString().split("T")[0];
     if (routineData.lastMorningCheckIn !== todayStr || !routineData.morningCheckInTime) {
-      const rewardPoints = isEarlyBirdWindow ? 15 : 10;
+      let rewardPoints = 5;
+      let label = "상시 출석체크";
+      if (isEarlyBirdWindow) {
+        rewardPoints = 10;
+        label = "얼리버드 출석체크";
+      } else if (isStandardMorningWindow) {
+        rewardPoints = 7;
+        label = "일반 모닝 출석체크";
+      }
+
       const checkInTimeFormatted = now.toLocaleTimeString(
         lang === 'ko' ? 'ko-KR' : lang === 'ja' ? 'ja-JP' : 'en-US',
         { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' }
@@ -164,7 +173,7 @@ export default function App() {
         lastMorningCheckIn: todayStr,
         morningCheckInTime: checkInTimeFormatted
       }));
-      addPoints(rewardPoints, 'Morning check-in');
+      addPoints(rewardPoints, `Morning check-in (${label})`);
       confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
     }
   };
@@ -497,8 +506,8 @@ export default function App() {
               onCheckInMorning={handleCheckInMorning}
               onResetMorningCheckIn={handleResetMorningCheckIn}
               isMorningCheckedIn={isMorningCheckedIn && !!routineData.morningCheckInTime}
-              isMorningTimeWindow={isMorningTimeWindow}
               isEarlyBirdWindow={isEarlyBirdWindow}
+              isStandardMorningWindow={isStandardMorningWindow}
               currentTime={now}
               lang={lang}
               t={t}
