@@ -129,7 +129,7 @@ export default function MorningRoutine({
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', width: '100%', maxWidth: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '8px', flexWrap: 'wrap' }}>
             
-            {/* Real-Time Electronic Digital Clock Badge */}
+            {/* Real-Time Digital Clock Badge */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -137,54 +137,27 @@ export default function MorningRoutine({
               background: isMorningCheckedIn 
                 ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 95, 70, 0.3))' 
                 : 'linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(30, 25, 15, 0.8))',
-              padding: '6px 12px',
+              padding: '8px 14px',
               borderRadius: '12px',
               border: isMorningCheckedIn ? '1.5px solid #10B981' : '1.5px solid #FFD700',
               boxShadow: isMorningCheckedIn ? '0 0 15px rgba(16, 185, 129, 0.3)' : '0 0 15px rgba(255, 215, 0, 0.3)'
             }}>
               <Clock size={18} color={isMorningCheckedIn ? "#10B981" : "#FFD700"} className={isMorningCheckedIn ? "" : "animate-pulse"} />
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '0.68rem', color: isMorningCheckedIn ? '#10B981' : 'var(--text-secondary)', fontWeight: 600 }}>
-                  {isMorningCheckedIn ? '🔒 오늘 기상 출석완료 시각' : '⏱️ 실시간 전자시계'}
-                </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{
-                    color: isMorningCheckedIn ? '#10B981' : '#FFD700',
-                    fontWeight: 900,
-                    fontSize: '1.05rem',
-                    letterSpacing: '1px',
-                    fontFamily: 'monospace, var(--font-family)',
-                    fontVariantNumeric: 'tabular-nums',
-                    textShadow: isMorningCheckedIn ? '0 0 8px rgba(16, 185, 129, 0.5)' : '0 0 8px rgba(255, 215, 0, 0.6)'
-                  }}>
-                    {displayClockString}
-                  </span>
-                  {isMorningCheckedIn ? (
-                    <span style={{ fontSize: '0.68rem', color: '#10B981', fontWeight: 800 }}>[멈춤 🔒]</span>
-                  ) : (
-                    <span style={{ fontSize: '0.65rem', color: '#FFF', background: '#EF4444', padding: '2px 5px', borderRadius: '4px', fontWeight: 800 }}>LIVE</span>
-                  )}
-                </div>
-              </div>
-              {isMorningCheckedIn && onResetMorningCheckIn && (
-                <button 
-                  onClick={onResetMorningCheckIn}
-                  title="실시간 시계 작동 테스트를 위해 출석을 초기화합니다"
-                  style={{
-                    background: 'rgba(245, 158, 11, 0.2)',
-                    border: '1px solid #F59E0B',
-                    color: '#FFD700',
-                    fontSize: '0.68rem',
-                    padding: '3px 8px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: 700,
-                    marginLeft: '4px',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  🔄 다시 측정
-                </button>
+              <span style={{
+                color: isMorningCheckedIn ? '#10B981' : '#FFD700',
+                fontWeight: 900,
+                fontSize: '1.1rem',
+                letterSpacing: '1px',
+                fontFamily: 'monospace, var(--font-family)',
+                fontVariantNumeric: 'tabular-nums',
+                textShadow: isMorningCheckedIn ? '0 0 8px rgba(16, 185, 129, 0.5)' : '0 0 8px rgba(255, 215, 0, 0.6)'
+              }}>
+                {displayClockString}
+              </span>
+              {isMorningCheckedIn ? (
+                <span style={{ fontSize: '0.7rem', color: '#10B981', fontWeight: 800 }}>[멈춤 🔒]</span>
+              ) : (
+                <span style={{ fontSize: '0.65rem', color: '#FFF', background: '#EF4444', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>LIVE</span>
               )}
             </div>
 
