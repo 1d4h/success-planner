@@ -77,8 +77,17 @@ export default function App() {
     }));
   };
 
+  // Real-time Live Clock State
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   const isTimeBetween = (startHH, startMM, endHH, endMM) => {
-    const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
     const startMinutes = startHH * 60 + startMM;
     const endMinutes = endHH * 60 + endMM;
@@ -450,6 +459,8 @@ export default function App() {
               isMorningCheckedIn={isMorningCheckedIn}
               isMorningTimeWindow={isMorningTimeWindow}
               isEarlyBirdWindow={isEarlyBirdWindow}
+              currentTime={now}
+              lang={lang}
               t={t}
             />
           )}
@@ -464,6 +475,8 @@ export default function App() {
               isEveningTimeWindow={isEveningTimeWindow}
               isNightOwlWindow={isNightOwlWindow}
               userPlan={user.plan}
+              currentTime={now}
+              lang={lang}
               t={t}
             />
           )}

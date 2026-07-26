@@ -33,7 +33,9 @@ export const translations = {
     // Morning Routine
     morningTitle: "☀️ 모닝 루틴 (The Start of Day)",
     morningSubtitle: "오늘 하루의 승리를 결정짓는 든든한 아침 체크인",
-    wakeTime: "오늘 기상 시간:",
+    currentTimeLabel: "현재 실시간:",
+    targetWakeTime: "목표 기상:",
+    wakeTime: "목표 기상 시간:",
     affirmationTitle: "아침 확언 (Affirmation)",
     affirmationSubtitle: "스스로에게 긍정의 에너지를 불어넣는 강렬한 다짐을 적어보세요.",
     affirmationPlaceholder: "예: 나는 매일 성장하고 있으며, 내 삶의 모든 도전을 거뜬히 이겨낸다!",
@@ -133,7 +135,9 @@ export const translations = {
     // Morning Routine
     morningTitle: "☀️ Morning Routine (Start of Day)",
     morningSubtitle: "Start your day with powerful check-in for daily victory",
-    wakeTime: "Today's Wake Time:",
+    currentTimeLabel: "Live Time:",
+    targetWakeTime: "Target Wake:",
+    wakeTime: "Target Wake Time:",
     affirmationTitle: "Morning Affirmation",
     affirmationSubtitle: "Write powerful affirmations to ignite positive energy.",
     affirmationPlaceholder: "e.g. I am growing every day and overcoming all challenges!",
@@ -233,6 +237,8 @@ export const translations = {
     // Morning Routine
     morningTitle: "☀️ モーニングルーティン (Start of Day)",
     morningSubtitle: "朝のチェックインで1日の勝利を確定させましょう",
+    currentTimeLabel: "現在時刻:",
+    targetWakeTime: "目標起床:",
     wakeTime: "本日の起床時間:",
     affirmationTitle: "朝のアファメーション (Affirmation)",
     affirmationSubtitle: "自分自身にポジティブなエネルギーを与える宣言を記入しましょう",

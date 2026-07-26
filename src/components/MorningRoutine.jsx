@@ -13,9 +13,16 @@ export default function MorningRoutine({
   isMorningCheckedIn, 
   isMorningTimeWindow,
   isEarlyBirdWindow,
+  currentTime,
+  lang,
   t 
 }) {
   const [newTodo, setNewTodo] = useState('');
+
+  const liveClockString = (currentTime || new Date()).toLocaleTimeString(
+    lang === 'ko' ? 'ko-KR' : lang === 'ja' ? 'ja-JP' : 'en-US',
+    { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' }
+  );
 
   const triggerCelebration = () => {
     confetti({
@@ -113,20 +120,45 @@ export default function MorningRoutine({
           </div>
         </div>
 
-        {/* Wake up time tracker & Morning Check-in Button */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px', width: '100%', maxWidth: '100%' }}>
+        {/* Real-time Clock, Target Wake Time & Morning Check-in Button */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', width: '100%', maxWidth: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '8px', flexWrap: 'wrap' }}>
+            
+            {/* Left Box: Live Real-time Clock */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              background: 'rgba(0,0,0,0.3)',
+              background: 'rgba(0,0,0,0.4)',
+              padding: '6px 12px',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid rgba(255, 215, 0, 0.3)',
+              boxShadow: '0 0 10px rgba(245, 158, 11, 0.15)'
+            }}>
+              <Clock size={15} color="#FFD700" className="animate-pulse" />
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t.currentTimeLabel || '현재 실시간:'}</span>
+              <span style={{
+                color: '#FFD700',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                letterSpacing: '0.5px',
+                fontVariantNumeric: 'tabular-nums'
+              }}>
+                {liveClockString}
+              </span>
+            </div>
+
+            {/* Middle Box: Target Wake Time */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'rgba(0,0,0,0.25)',
               padding: '6px 10px',
               borderRadius: 'var(--radius-md)',
               border: '1px solid rgba(245, 158, 11, 0.2)'
             }}>
-              <Clock size={14} color="#F59E0B" />
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t.wakeTime}</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t.targetWakeTime || '목표 기상:'}</span>
               <input 
                 type="time" 
                 value={routineData.wakeTime} 
@@ -134,15 +166,16 @@ export default function MorningRoutine({
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#FFD700',
+                  color: '#F59E0B',
                   fontWeight: 700,
-                  fontSize: '0.88rem',
+                  fontSize: '0.85rem',
                   outline: 'none',
                   cursor: 'pointer'
                 }}
               />
             </div>
 
+            {/* Right Box: Check-in Button */}
             <button
               className="glass-button"
               onClick={onCheckInMorning}

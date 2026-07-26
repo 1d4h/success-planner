@@ -11,10 +11,17 @@ export default function EveningRoutine({
   isEveningTimeWindow,
   isNightOwlWindow,
   userPlan,
+  currentTime,
+  lang,
   t 
 }) {
   const [aiReport, setAiReport] = useState(routineData.aiReport || null);
   const [isAiAnalyzing, setIsAiAnalyzing] = useState(false);
+
+  const liveClockString = (currentTime || new Date()).toLocaleTimeString(
+    lang === 'ko' ? 'ko-KR' : lang === 'ja' ? 'ja-JP' : 'en-US',
+    { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' }
+  );
 
   const handleGratitudeChange = (index, value) => {
     const updated = [...routineData.gratitudeEntries];
@@ -127,43 +134,69 @@ export default function EveningRoutine({
         </div>
 
         {/* Evening Check-in Button & Time Window Info */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px', width: '100%' }}>
-          <button
-            className="glass-button"
-            onClick={onCheckInEvening}
-            disabled={isEveningCheckedIn || !isEveningTimeWindow}
-            title={!isEveningTimeWindow ? t.eveningCheckInDisabledMsg : ''}
-            style={{
-              width: '100%',
-              background: isEveningCheckedIn 
-                ? 'rgba(16, 185, 129, 0.2)' 
-                : isNightOwlWindow
-                  ? 'linear-gradient(135deg, #8B5CF6, #EC4899)'
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', width: '100%' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '8px', flexWrap: 'wrap' }}>
+            
+            {/* Live Real-time Clock */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'rgba(0,0,0,0.4)',
+              padding: '6px 12px',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid rgba(167, 139, 250, 0.3)',
+              boxShadow: '0 0 10px rgba(139, 92, 246, 0.15)'
+            }}>
+              <Clock size={15} color="#A78BFA" className="animate-pulse" />
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t.currentTimeLabel || '현재 실시간:'}</span>
+              <span style={{
+                color: '#A78BFA',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                letterSpacing: '0.5px',
+                fontVariantNumeric: 'tabular-nums'
+              }}>
+                {liveClockString}
+              </span>
+            </div>
+
+            <button
+              className="glass-button"
+              onClick={onCheckInEvening}
+              disabled={isEveningCheckedIn || !isEveningTimeWindow}
+              title={!isEveningTimeWindow ? t.eveningCheckInDisabledMsg : ''}
+              style={{
+                background: isEveningCheckedIn 
+                  ? 'rgba(16, 185, 129, 0.2)' 
+                  : isNightOwlWindow
+                    ? 'linear-gradient(135deg, #8B5CF6, #EC4899)'
+                    : isEveningTimeWindow 
+                      ? 'var(--grad-evening)' 
+                      : 'rgba(255, 255, 255, 0.08)',
+                border: isEveningCheckedIn 
+                  ? '1px solid #10B981' 
                   : isEveningTimeWindow 
-                    ? 'var(--grad-evening)' 
-                    : 'rgba(255, 255, 255, 0.08)',
-              border: isEveningCheckedIn 
-                ? '1px solid #10B981' 
-                : isEveningTimeWindow 
-                  ? 'none' 
-                  : '1px solid rgba(255,255,255,0.1)',
-              boxShadow: isEveningCheckedIn || !isEveningTimeWindow ? 'none' : '0 4px 16px rgba(139, 92, 246, 0.4)',
-              color: isEveningTimeWindow || isEveningCheckedIn ? '#FFFFFF' : 'var(--text-muted)',
-              fontWeight: 800,
-              fontSize: '0.8rem',
-              padding: '8px 12px',
-              whiteSpace: 'nowrap',
-              cursor: (isEveningCheckedIn || !isEveningTimeWindow) ? 'not-allowed' : 'pointer',
-              opacity: (!isEveningTimeWindow && !isEveningCheckedIn) ? 0.7 : 1
-            }}
-          >
-            {isNightOwlWindow && !isEveningCheckedIn ? <Zap size={15} color="#FFF" /> : <Award size={15} />}
-            {isEveningCheckedIn 
-              ? t.eveningCheckedInBtn 
-              : isNightOwlWindow 
-                ? t.eveningEarlyBonusBtn 
-                : t.eveningCheckInBtn}
-          </button>
+                    ? 'none' 
+                    : '1px solid rgba(255,255,255,0.1)',
+                boxShadow: isEveningCheckedIn || !isEveningTimeWindow ? 'none' : '0 4px 16px rgba(139, 92, 246, 0.4)',
+                color: isEveningTimeWindow || isEveningCheckedIn ? '#FFFFFF' : 'var(--text-muted)',
+                fontWeight: 800,
+                fontSize: '0.8rem',
+                padding: '8px 12px',
+                whiteSpace: 'nowrap',
+                cursor: (isEveningCheckedIn || !isEveningTimeWindow) ? 'not-allowed' : 'pointer',
+                opacity: (!isEveningTimeWindow && !isEveningCheckedIn) ? 0.7 : 1
+              }}
+            >
+              {isNightOwlWindow && !isEveningCheckedIn ? <Zap size={15} color="#FFF" /> : <Award size={15} />}
+              {isEveningCheckedIn 
+                ? t.eveningCheckedInBtn 
+                : isNightOwlWindow 
+                  ? t.eveningEarlyBonusBtn 
+                  : t.eveningCheckInBtn}
+            </button>
+          </div>
 
           <span style={{ fontSize: '0.72rem', color: isNightOwlWindow ? '#EC4899' : isEveningTimeWindow ? '#A78BFA' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap' }}>
             <Clock size={11} /> {t.eveningTimeInfo}
