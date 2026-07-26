@@ -3,8 +3,8 @@ import { Check, Sparkles, Zap, Crown, CreditCard, ShieldCheck } from 'lucide-rea
 import confetti from 'canvas-confetti';
 import { loadTossPayments } from '@tosspayments/payment-sdk';
 
-// Toss Payments Official Client Key (토스페이먼츠 공식 테스트 클라이언트 키)
-const TOSS_CLIENT_KEY = 'test_ck_docs_Ovk5rk1E85286F18A562mA18';
+// Toss Payments Official Client Key (사용자 연동 테스트 클라이언트 키)
+const TOSS_CLIENT_KEY = 'test_ck_vZnjEJeQVxKZmJJZ75RY3PmOoBN0';
 
 export default function SubscriptionPricing({ plans, currentPlan, onSelectPlan, t }) {
   const [loadingPlanId, setLoadingPlanId] = useState(null);
