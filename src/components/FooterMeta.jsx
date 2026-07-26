@@ -26,7 +26,7 @@ export default function FooterMeta({ t }) {
           <h4 style={{ color: 'var(--text-primary)', fontWeight: '600', marginBottom: '8px', fontSize: '0.9rem' }}>
             고객지원 & 문의
           </h4>
-          <p style={{ color: 'var(--text-muted)' }}>이메일: support@successplanner.app</p>
+          <p style={{ color: 'var(--text-muted)' }}>이메일: jinung.biz@gmail.com</p>
           <p style={{ color: 'var(--text-muted)' }}>운영시간: 평일 09:00 - 18:00</p>
         </div>
       </div>
