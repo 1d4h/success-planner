@@ -142,7 +142,7 @@ export default function MorningRoutine({
               border: isMorningCheckedIn ? '1.5px solid #10B981' : '1.5px solid #FFD700',
               boxShadow: isMorningCheckedIn ? '0 0 15px rgba(16, 185, 129, 0.3)' : '0 0 15px rgba(255, 215, 0, 0.3)'
             }}>
-              <Clock size={18} color={isMorningCheckedIn ? "#10B981" : "#FFD700"} className={isMorningCheckedIn ? "" : "animate-pulse"} />
+              <Clock size={18} color="#FFFFFF" className={isMorningCheckedIn ? "" : "animate-pulse"} />
               <span style={{
                 color: isMorningCheckedIn ? '#10B981' : '#FFD700',
                 fontWeight: 900,
@@ -161,29 +161,36 @@ export default function MorningRoutine({
               )}
             </div>
 
-            {/* Middle Box: Target Wake Time */}
+            {/* Middle Box: Target Wake Time (Direct Typing Text Input) */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              background: 'rgba(0,0,0,0.25)',
-              padding: '6px 10px',
+              background: 'rgba(0,0,0,0.3)',
+              padding: '6px 12px',
               borderRadius: 'var(--radius-md)',
-              border: '1px solid rgba(245, 158, 11, 0.2)'
+              border: '1px solid rgba(255, 255, 255, 0.2)'
             }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{t.targetWakeTime || '목표 기상:'}</span>
+              <Clock size={15} color="#FFFFFF" />
+              <span style={{ fontSize: '0.75rem', color: '#E2E8F0', whiteSpace: 'nowrap' }}>{t.targetWakeTime || '목표 기상:'}</span>
               <input 
-                type="time" 
-                value={routineData.wakeTime} 
+                type="text" 
+                value={routineData.wakeTime || ''} 
                 onChange={handleWakeTimeChange}
+                placeholder="06:30"
+                maxLength={10}
                 style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: '#F59E0B',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 215, 0, 0.4)',
+                  borderRadius: '6px',
+                  color: '#FFD700',
                   fontWeight: 700,
-                  fontSize: '0.85rem',
+                  fontSize: '0.9rem',
+                  padding: '3px 8px',
+                  width: '75px',
+                  textAlign: 'center',
                   outline: 'none',
-                  cursor: 'pointer'
+                  boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.3)'
                 }}
               />
             </div>
