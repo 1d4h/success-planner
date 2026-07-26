@@ -65,6 +65,19 @@ export default function App() {
     localStorage.setItem('sp_push_enabled', pushEnabled ? 'true' : 'false');
   }, [pushEnabled]);
 
+  // Toss Payments Redirect Result Listener
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const isPaymentSuccess = params.get('payment') === 'success' || params.get('paymentKey');
+    const targetPlan = params.get('plan');
+    if (isPaymentSuccess && targetPlan) {
+      setUser(prev => ({ ...prev, plan: targetPlan }));
+      confetti({ particleCount: 100, spread: 80, origin: { y: 0.5 } });
+      alert(`🎉 [토스페이먼츠 결제 승인]\n\n${targetPlan.toUpperCase()} 멤버십 구독 혜택이 성공적으로 반영되었습니다!`);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
   const addPoints = (baseAmount, reason) => {
     let multiplier = 1.0;
     if (user.plan === 'pro') multiplier = 1.2;
