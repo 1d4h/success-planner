@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Flame, Target, ChevronDown, ChevronRight, CheckSquare, Plus, Award, Calendar } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Flame, Target, ChevronDown, ChevronRight, CheckSquare, Plus, Award, Calendar, Edit3, Save, X, FileText, Check, Trash2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function GoalTracking({ goalsTree, setGoalsTree, streak, lastCompletedDate, onCheckInToday, t }) {
@@ -9,6 +9,72 @@ export default function GoalTracking({ goalsTree, setGoalsTree, streak, lastComp
   const [newYearGoal, setNewYearGoal] = useState('');
   const [newMonthGoal, setNewMonthGoal] = useState({});
   const [newDayGoal, setNewDayGoal] = useState({});
+
+  // Daily Records State (Habit Tracker Calendar Note Storage)
+  const [dailyRecords, setDailyRecords] = useState(() => {
+    const saved = localStorage.getItem('sp_daily_records');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  const todayDateNum = new Date().getDate();
+  const [selectedDay, setSelectedDay] = useState(todayDateNum);
+  const [recordInput, setRecordInput] = useState(() => {
+    const now = new Date();
+    const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(todayDateNum).padStart(2, '0')}`;
+    const saved = localStorage.getItem('sp_daily_records');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return parsed[key]?.note || '';
+    }
+    return '';
+  });
+  const [savedNotice, setSavedNotice] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('sp_daily_records', JSON.stringify(dailyRecords));
+  }, [dailyRecords]);
+
+  const getDayKey = (dayNum) => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(dayNum).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleSelectDay = (dayNum) => {
+    setSelectedDay(dayNum);
+    const key = getDayKey(dayNum);
+    setRecordInput(dailyRecords[key]?.note || '');
+    setSavedNotice(false);
+  };
+
+  const handleSaveRecord = () => {
+    if (!selectedDay) return;
+    const key = getDayKey(selectedDay);
+    const existing = dailyRecords[key] || {};
+    const updated = {
+      ...dailyRecords,
+      [key]: {
+        ...existing,
+        note: recordInput.trim(),
+        updatedAt: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+      }
+    };
+    setDailyRecords(updated);
+    setSavedNotice(true);
+    confetti({ particleCount: 35, spread: 55, origin: { y: 0.6 } });
+    setTimeout(() => setSavedNotice(false), 2500);
+  };
+
+  const handleDeleteRecord = () => {
+    if (!selectedDay) return;
+    const key = getDayKey(selectedDay);
+    const updated = { ...dailyRecords };
+    delete updated[key];
+    setDailyRecords(updated);
+    setRecordInput('');
+  };
 
   const toggleYear = (id) => {
     setExpandedYears(prev => ({ ...prev, [id]: !prev[id] }));
@@ -88,7 +154,6 @@ export default function GoalTracking({ goalsTree, setGoalsTree, streak, lastComp
 
   // Generating Month Calendar Grass Grid (31 days representation)
   const currentMonthDays = Array.from({ length: 31 }, (_, i) => i + 1);
-  const todayDateNum = new Date().getDate();
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -148,14 +213,23 @@ export default function GoalTracking({ goalsTree, setGoalsTree, streak, lastComp
 
       {/* Monthly Habit Success Calendar Grid */}
       <div className="glass-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Calendar size={20} color="#10B981" />
-          <div>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>{t.monthlyCalendarTitle}</h3>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>이번 달 일별 습관 달성 현황</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Calendar size={20} color="#10B981" />
+            <div>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>{t.monthlyCalendarTitle}</h3>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>날짜를 클릭하여 해당 일자의 기록을 저장하고 조회해보세요!</p>
+            </div>
           </div>
+
+          {selectedDay && (
+            <span style={{ fontSize: '0.75rem', color: '#10B981', background: 'rgba(16, 185, 129, 0.15)', padding: '4px 10px', borderRadius: '12px', fontWeight: 700 }}>
+              선택된 날짜: {new Date().getMonth() + 1}월 {selectedDay}일
+            </span>
+          )}
         </div>
 
+        {/* 31 Days Grid */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(7, 1fr)',
@@ -168,33 +242,147 @@ export default function GoalTracking({ goalsTree, setGoalsTree, streak, lastComp
           {currentMonthDays.map((dayNum) => {
             const isCompleted = dayNum <= todayDateNum - 1 || (dayNum === todayDateNum && isCheckedInToday);
             const isToday = dayNum === todayDateNum;
+            const isSelected = selectedDay === dayNum;
+            const dayKey = getDayKey(dayNum);
+            const hasRecord = !!(dailyRecords[dayKey]?.note);
 
             return (
               <div
                 key={dayNum}
-                title={`Day ${dayNum}: ${isCompleted ? 'Achieved' : 'Pending'}`}
+                onClick={() => handleSelectDay(dayNum)}
+                title={`Day ${dayNum}: ${isCompleted ? '달성 완료' : '미달성'}${hasRecord ? ' (기록 있음)' : ''}`}
                 style={{
-                  height: '28px',
+                  height: '32px',
                   borderRadius: '6px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 700,
-                  fontSize: '0.75rem',
-                  background: isCompleted 
-                    ? 'linear-gradient(135deg, #10B981, #059669)' 
+                  fontSize: '0.78rem',
+                  position: 'relative',
+                  cursor: 'pointer',
+                  background: isSelected
+                    ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(139, 92, 246, 0.5))'
+                    : isCompleted 
+                      ? 'linear-gradient(135deg, #10B981, #059669)' 
+                      : isToday 
+                        ? 'rgba(245, 158, 11, 0.3)' 
+                        : 'rgba(255,255,255,0.04)',
+                  color: isSelected ? '#FFFFFF' : isCompleted ? '#FFFFFF' : isToday ? '#FFD700' : 'var(--text-muted)',
+                  border: isSelected
+                    ? '2px solid #A78BFA'
                     : isToday 
-                      ? 'rgba(245, 158, 11, 0.3)' 
-                      : 'rgba(255,255,255,0.04)',
-                  color: isCompleted ? '#FFFFFF' : isToday ? '#FFD700' : 'var(--text-muted)',
-                  border: isToday ? '2px solid #F59E0B' : '1px solid transparent'
+                      ? '2px solid #F59E0B' 
+                      : '1px solid transparent',
+                  boxShadow: isSelected ? '0 0 10px rgba(167, 139, 250, 0.5)' : 'none',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 {dayNum}
+                {hasRecord && (
+                  <span style={{
+                    position: 'absolute',
+                    top: '2px',
+                    right: '3px',
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    background: '#FFD700',
+                    boxShadow: '0 0 4px #FFD700'
+                  }} />
+                )}
               </div>
             );
           })}
         </div>
+
+        {/* Selected Day Record Input & View Box */}
+        {selectedDay && (
+          <div style={{
+            marginTop: '8px',
+            background: 'rgba(15, 23, 42, 0.6)',
+            border: '1px solid rgba(139, 92, 246, 0.3)',
+            borderRadius: 'var(--radius-md)',
+            padding: '14px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <FileText size={18} color="#A78BFA" />
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#A78BFA' }}>
+                  {new Date().getMonth() + 1}월 {selectedDay}일 일기 & 습관 회고
+                </h4>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {dailyRecords[getDayKey(selectedDay)]?.updatedAt && (
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                    마지막 수정: {dailyRecords[getDayKey(selectedDay)].updatedAt}
+                  </span>
+                )}
+                {savedNotice && (
+                  <span style={{ fontSize: '0.75rem', color: '#10B981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '3px' }}>
+                    <Check size={14} /> 저장 완료!
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <textarea
+              className="glass-input"
+              rows={3}
+              value={recordInput}
+              onChange={(e) => setRecordInput(e.target.value)}
+              placeholder={`${new Date().getMonth() + 1}월 ${selectedDay}일에 무엇을 성취하셨나요? 생각, 성과, 회고를 적어 저장하세요.`}
+              style={{
+                fontSize: '0.85rem',
+                padding: '10px',
+                lineHeight: '1.5',
+                width: '100%'
+              }}
+            />
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+              {dailyRecords[getDayKey(selectedDay)]?.note && (
+                <button
+                  onClick={handleDeleteRecord}
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.15)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    color: '#EF4444',
+                    padding: '6px 12px',
+                    borderRadius: 'var(--radius-sm)',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <Trash2 size={14} /> 삭제
+                </button>
+              )}
+
+              <button
+                className="glass-button"
+                onClick={handleSaveRecord}
+                style={{
+                  background: 'linear-gradient(135deg, #10B981, #059669)',
+                  color: '#FFFFFF',
+                  padding: '6px 14px',
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                <Save size={14} /> {selectedDay}일 기록 저장
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* Goal Tree Visualizer Header */}
