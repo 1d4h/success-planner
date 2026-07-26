@@ -8,7 +8,6 @@ const TOSS_CLIENT_KEY = 'test_ck_docs_Ovk5rk1E85286F18A562mA18';
 
 export default function SubscriptionPricing({ plans, currentPlan, onSelectPlan, t }) {
   const [loadingPlanId, setLoadingPlanId] = useState(null);
-  const [testModalPlan, setTestModalPlan] = useState(null);
 
   const handlePlanClick = async (plan) => {
     if (plan.id === 'free' || currentPlan === plan.id) {
@@ -45,12 +44,11 @@ export default function SubscriptionPricing({ plans, currentPlan, onSelectPlan, 
       });
 
     } catch (error) {
-      console.warn('Toss Payments window warning or popup restriction:', error);
+      console.error('Toss Payments Error:', error);
       if (error?.code === 'USER_CANCEL') {
         alert('결제를 취소하셨습니다.');
       } else {
-        // 토스페이먼츠 테스트 결제창 팝업이 팝업 차단 등으로 미출력될 시 보조 모달 띄우기
-        setTestModalPlan(plan);
+        alert(`결제 요청 중 오류가 발생했습니다: ${error?.message || '다시 시도해 주세요.'}`);
       }
     } finally {
       setLoadingPlanId(null);
@@ -246,127 +244,6 @@ export default function SubscriptionPricing({ plans, currentPlan, onSelectPlan, 
           );
         })}
       </div>
-
-      {/* Toss Payments Test Checkout Modal */}
-      {testModalPlan && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.75)',
-          backdropFilter: 'blur(5px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '16px'
-        }}>
-          <div className="glass-card" style={{
-            maxWidth: '420px',
-            width: '100%',
-            padding: '24px',
-            background: '#1E293B',
-            border: '2px solid #006AFF',
-            borderRadius: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
-            boxShadow: '0 0 30px rgba(0, 106, 255, 0.4)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{
-                background: '#006AFF',
-                width: '36px',
-                height: '36px',
-                borderRadius: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <CreditCard size={20} color="#FFF" />
-              </div>
-              <div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FFF' }}>
-                  🟦 토스페이먼츠(Toss Payments) 결제
-                </h3>
-                <p style={{ fontSize: '0.75rem', color: '#94A3B8' }}>
-                  {testModalPlan.name} 정기구독 결제 창
-                </p>
-              </div>
-            </div>
-
-            <div style={{
-              background: 'rgba(0,0,0,0.3)',
-              padding: '12px 14px',
-              borderRadius: '8px',
-              border: '1px solid rgba(255,255,255,0.1)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '6px'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-                <span style={{ color: '#94A3B8' }}>구독 상품:</span>
-                <span style={{ color: '#FFF', fontWeight: 700 }}>{testModalPlan.name} 플랜</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-                <span style={{ color: '#94A3B8' }}>결제 금액:</span>
-                <span style={{ color: '#FFD700', fontWeight: 800 }}>₩{(typeof testModalPlan.price === 'number' ? testModalPlan.price : parseInt(String(testModalPlan.price).replace(/[^0-9]/g, ''), 10) || 0).toLocaleString()} /월</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
-                <span style={{ color: '#94A3B8' }}>결제 수단:</span>
-                <span style={{ color: '#38BDF8', fontWeight: 700 }}>신용/체크카드, 토스페이, 카카오페이</span>
-              </div>
-            </div>
-
-            <p style={{ fontSize: '0.78rem', color: '#CBD5E1', lineHeight: '1.4' }}>
-              ℹ️ 토스페이먼츠 테스트 환경 승인 단계입니다. 아래 <b>[결제 승인 완료]</b> 버튼을 누르면 즉시 구독 혜택이 정상 활성화됩니다.
-            </p>
-
-            <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-              <button
-                onClick={() => setTestModalPlan(null)}
-                style={{
-                  flex: 1,
-                  background: 'rgba(255,255,255,0.08)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  color: '#94A3B8',
-                  padding: '10px',
-                  borderRadius: '8px',
-                  fontWeight: 700,
-                  fontSize: '0.85rem',
-                  cursor: 'pointer'
-                }}
-              >
-                취소
-              </button>
-              <button
-                onClick={() => {
-                  confetti({ particleCount: 100, spread: 80, origin: { y: 0.5 } });
-                  alert(`🎉 [토스페이먼츠 결제 승인 완료]\n\n${testModalPlan.name} 멤버십 프리미엄 혜택이 정상 적용되었습니다!`);
-                  onSelectPlan(testModalPlan.id);
-                  setTestModalPlan(null);
-                }}
-                style={{
-                  flex: 2,
-                  background: 'linear-gradient(135deg, #006AFF, #8B5CF6)',
-                  border: 'none',
-                  color: '#FFF',
-                  padding: '10px',
-                  borderRadius: '8px',
-                  fontWeight: 800,
-                  fontSize: '0.85rem',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(0, 106, 255, 0.4)'
-                }}
-              >
-                💳 결제 승인 완료
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );
