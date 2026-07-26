@@ -152,12 +152,8 @@ export default function App() {
   };
 
   const handleCheckInMorning = () => {
-    if (!isMorningTimeWindow) {
-      alert(t.morningCheckInDisabledMsg);
-      return;
-    }
     const todayStr = new Date(Date.now() + timeOffset).toISOString().split("T")[0];
-    if (routineData.lastMorningCheckIn !== todayStr) {
+    if (routineData.lastMorningCheckIn !== todayStr || !routineData.morningCheckInTime) {
       const rewardPoints = isEarlyBirdWindow ? 15 : 10;
       const checkInTimeFormatted = now.toLocaleTimeString(
         lang === 'ko' ? 'ko-KR' : lang === 'ja' ? 'ja-JP' : 'en-US',
@@ -171,6 +167,14 @@ export default function App() {
       addPoints(rewardPoints, 'Morning check-in');
       confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
     }
+  };
+
+  const handleResetMorningCheckIn = () => {
+    setRoutineData(prev => ({
+      ...prev,
+      lastMorningCheckIn: null,
+      morningCheckInTime: null
+    }));
   };
 
   const handleCheckInEvening = () => {
@@ -491,7 +495,8 @@ export default function App() {
               userPlan={user.plan}
               onAddPoints={addPoints}
               onCheckInMorning={handleCheckInMorning}
-              isMorningCheckedIn={isMorningCheckedIn}
+              onResetMorningCheckIn={handleResetMorningCheckIn}
+              isMorningCheckedIn={isMorningCheckedIn && !!routineData.morningCheckInTime}
               isMorningTimeWindow={isMorningTimeWindow}
               isEarlyBirdWindow={isEarlyBirdWindow}
               currentTime={now}

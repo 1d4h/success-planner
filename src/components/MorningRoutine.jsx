@@ -10,6 +10,7 @@ export default function MorningRoutine({
   userPlan, 
   onAddPoints, 
   onCheckInMorning, 
+  onResetMorningCheckIn,
   isMorningCheckedIn, 
   isMorningTimeWindow,
   isEarlyBirdWindow,
@@ -152,9 +153,34 @@ export default function MorningRoutine({
               }}>
                 {displayClockString}
               </span>
-              {isMorningCheckedIn && (
-                <span style={{ fontSize: '0.7rem', color: '#10B981', marginLeft: '2px', fontWeight: 700 }}>
-                  (출석 🔒)
+              {isMorningCheckedIn ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginLeft: '4px' }}>
+                  <span style={{ fontSize: '0.7rem', color: '#10B981', fontWeight: 700 }}>
+                    (출석 🔒)
+                  </span>
+                  {onResetMorningCheckIn && (
+                    <button 
+                      onClick={onResetMorningCheckIn}
+                      title="시계 실시간 작동 테스트를 위해 출석 기록을 초기화합니다"
+                      style={{
+                        background: 'rgba(245, 158, 11, 0.2)',
+                        border: '1px solid rgba(245, 158, 11, 0.4)',
+                        color: '#FFD700',
+                        fontSize: '0.68rem',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                        marginLeft: '4px'
+                      }}
+                    >
+                      🔄 시간 다시 측정
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <span style={{ fontSize: '0.68rem', color: '#EF4444', fontWeight: 700, marginLeft: '4px', background: 'rgba(239, 68, 68, 0.15)', padding: '2px 6px', borderRadius: '4px' }}>
+                  🔴 LIVE
                 </span>
               )}
             </div>
@@ -190,29 +216,24 @@ export default function MorningRoutine({
             <button
               className="glass-button"
               onClick={onCheckInMorning}
-              disabled={isMorningCheckedIn || !isMorningTimeWindow}
-              title={!isMorningTimeWindow ? t.morningCheckInDisabledMsg : ''}
+              disabled={isMorningCheckedIn}
               style={{
                 background: isMorningCheckedIn 
                   ? 'rgba(16, 185, 129, 0.2)' 
                   : isEarlyBirdWindow
                     ? 'linear-gradient(135deg, #FF416C, #FFD700)'
-                    : isMorningTimeWindow 
-                      ? 'var(--grad-morning)' 
-                      : 'rgba(255, 255, 255, 0.08)',
+                    : 'var(--grad-morning)',
                 border: isMorningCheckedIn 
                   ? '1px solid #10B981' 
-                  : isMorningTimeWindow 
-                    ? 'none' 
-                    : '1px solid rgba(255,255,255,0.1)',
-                boxShadow: isMorningCheckedIn || !isMorningTimeWindow ? 'none' : '0 4px 16px rgba(245, 158, 11, 0.4)',
-                color: isMorningTimeWindow || isMorningCheckedIn ? '#FFFFFF' : 'var(--text-muted)',
+                  : 'none',
+                boxShadow: isMorningCheckedIn ? 'none' : '0 4px 16px rgba(245, 158, 11, 0.4)',
+                color: '#FFFFFF',
                 fontWeight: 800,
                 fontSize: '0.8rem',
                 padding: '8px 12px',
                 whiteSpace: 'nowrap',
-                cursor: (isMorningCheckedIn || !isMorningTimeWindow) ? 'not-allowed' : 'pointer',
-                opacity: (!isMorningTimeWindow && !isMorningCheckedIn) ? 0.7 : 1
+                cursor: isMorningCheckedIn ? 'not-allowed' : 'pointer',
+                opacity: 1
               }}
             >
               {isEarlyBirdWindow && !isMorningCheckedIn ? <Zap size={15} color="#FFF" /> : <Award size={15} />}
