@@ -47,6 +47,8 @@ export default function SubscriptionPricing({ plans, currentPlan, onSelectPlan, 
       console.error('Toss Payments Error:', error);
       if (error?.code === 'USER_CANCEL') {
         alert('결제를 취소하셨습니다.');
+      } else if (error?.message?.includes('인증되지 않은') || error?.message?.includes('키')) {
+        alert(`🔑 [토스페이먼츠 연동 안내]\n\n토스페이먼츠 보안 정책상 개별 도메인(success-planner.pages.dev)에서는 대표님의 토스 API 클라이언트 키가 설정되어야 결제창이 정상 열립니다.\n\n1️⃣developers.tosspayments.com 접속 및 로그인\n2️⃣ [내 개발 정보] → [API 키]에서 '클라이언트 키(test_ck_... 또는 live_ck_...)' 복사\n3️⃣ 해당 키를 전달해 주시면 즉시 결제가 가능하도록 적용해 드립니다!`);
       } else {
         alert(`결제 요청 중 오류가 발생했습니다: ${error?.message || '다시 시도해 주세요.'}`);
       }
